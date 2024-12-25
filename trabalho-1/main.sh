@@ -2,7 +2,7 @@
 
 #compilação
 cd c
-gcc main.c -o ../exe/main
+gcc main.c -o ../exe/main -lm
 
 if [ $? -eq 0 ]; then
     #execução

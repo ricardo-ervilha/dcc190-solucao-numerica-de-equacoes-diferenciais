@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
 #include "parameters.h"
 
@@ -86,6 +85,7 @@ int main(int argc, char* argv[]){
     real num, den;
     real error;
     real size;
+    real x, y;
 
     /*Preenchendo os valores*/
     dx = (x_f - x_0) / Ix; dy = (y_f - y_0) / Iy;
@@ -108,11 +108,12 @@ int main(int argc, char* argv[]){
         
         //Atualização do x_kp1 baseado nas nossas discretizações e no x_k;
         for(int i = 1; i < Ix-1; i++){
+            x = x_0 + i*dx;
             for(int j = 1; j < Iy-1; j++){
+                y = y_0 + j*dy;
+                num = dy2 * k(x,y) * x_k(i-1, j) + dx2 * k(x,y) * x_k(i, j-1) + dy2 * k(x,y) * x_k(i+1, j) + dx2 * k(x,y) * x_k(i, j+1) + omega_b(x,y) * rho_b(x,y) * c_b(x,y) * T_a + Q_m(x,y);
 
-                num = dy2 * k() * x_k(i-1, j) + dx2 * k() * x_k(i, j-1) + dy2 * k() * x_k(i+1, j) + dx2 * k() * x_k(i, j+1) + omega_b() * rho_b() * c_b() * T_a + Q_m();
-
-                den = dy2*(k() + k()) + dx2*(k() + k()) + omega_b() * rho_b() * c_b(); 
+                den = dy2*(k(x,y) + k(x,y)) + dx2*(k(x,y) + k(x,y)) + omega_b(x,y) * rho_b(x,y) * c_b(x,y); 
 
                 x_kp1[j*(i+1)] = num / den;
 
@@ -126,6 +127,10 @@ int main(int argc, char* argv[]){
     export_outputs("../inout/output.csv", size);
 
     printf("Conclusão completa\n");
+
+    /*Libera a memória alocada*/
+    free(vet);
+    free(x_kp1);
 
     return 0;
 }
