@@ -4,18 +4,24 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 mpl.use('Agg')
 
-data = np.genfromtxt("../inout/output.csv", delimiter=',')
+data = np.genfromtxt("../inout/exercise.csv", delimiter=',')
 
 size = int(np.sqrt(data.shape[0]))
-data = data.reshape(size, size)
+u = data.reshape(size, size)
 
-x = np.linspace(0, 0.05, size)
-y = np.linspace(0, 0.1, size)
+h = 0.05
+x = np.arange(0, 1+h, h)
+y = np.arange(0, 1+h, h)
 
-plt.figure(figsize=(8, 6))
-ax = sns.heatmap(data, cmap='coolwarm', xticklabels=np.round(x, 3), yticklabels=np.round(y, 3), cbar_kws={'label': 'Valor'}, annot=False)
+print(u)
 
-ax.invert_yaxis()
+X, Y = np.meshgrid(x, y)
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
 
-plt.savefig('../inout/heatmap.png', bbox_inches='tight')
-plt.close()
+ax.plot_wireframe(X, Y, u)
+
+plt.ylabel('y')
+plt.xlabel('x')
+
+plt.savefig('../inout/exercise.png')
