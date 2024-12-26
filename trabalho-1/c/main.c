@@ -59,7 +59,7 @@ void export_outputs(char* filename, int size){
 }
 
 /*Função intermediária para retornar os valores de x_k considerando o contorno do problema*/
-real x_k(int i, int j){
+real x_k(int i, int j){  //REVIEW: Considerar NEUMANN
     if(i == 0 && j > 0)
         return u_top;
     else if(i > 0 && j == 0)

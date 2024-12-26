@@ -63,7 +63,7 @@ real omega_b(real x, real y){
 }
 
 /*Calcula o valor de k, a condutividade térmica do sangue.*/
-real k(real x, real y){
+real k(real x, real y){ //REVIEW: Considerar Média Harmônica
     if(inside_circle(x, y) == 1) //dentro do tumor
         return 0.757981;
     else if(x < 0.038) //fora do tumor mas dentro do músculo
