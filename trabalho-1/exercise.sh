@@ -2,12 +2,12 @@
 
 #compilação
 cd c
-gcc main.c -o ../exe/main -lm
+gcc exercise.c -o ../exe/exercise -lm
 
 if [ $? -eq 0 ]; then
     #execução
     cd ../exe
-    ./main
+    ./exercise
 else
     echo "Erro na compilação"
 fi

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "string.h": "c",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "stdio.h": "c"
     }
 }

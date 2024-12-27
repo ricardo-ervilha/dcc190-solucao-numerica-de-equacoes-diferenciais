@@ -13,7 +13,7 @@ h = 0.05
 x = np.arange(0, 1+h, h)
 y = np.arange(0, 1+h, h)
 
-print(u)
+# print(u)
 
 X, Y = np.meshgrid(x, y)
 fig = plt.figure()

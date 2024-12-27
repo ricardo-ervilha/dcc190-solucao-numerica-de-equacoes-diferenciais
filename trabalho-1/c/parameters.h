@@ -3,6 +3,8 @@
 
 #include <math.h>
 
+/*Arquivo responsável pelo controle das variáveis do problema. Isso inclui constantes, variáveis globais, funções para definir/lidar com configurações e mais.*/
+
 #define real float // dica do Ruy em Algoritmos 1 :)
 
 
@@ -12,6 +14,7 @@
 int inside_circle(real x, real y){
     return sqrt( pow(x-x_center, 2) + pow(y-y_center, 2) ) <= 0.013;
 }
+
 
 /*Calcula o valor de Q_m, a geração de calor metabólica*/
 real Q_m(real x, real y){
