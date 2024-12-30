@@ -32,9 +32,13 @@ int main(int argc, char* argv[]){
                 k_xm = k_harm(k(x[i], z[j]), k(x[i_m], z[j]));
 
                 val1 = (k_zp * u_new[j_p][i] + k_zm * u_new[j_m][i] + k_xp * u_new[j][i_p] + k_xm * u_new[j][i_m]) / (h*h);
-                val2 = omega_b(x[i], z[j], u_new[j][i]) * c_b(x[i], z[j]) * (T_a - u_new[j][i]) + Q_m(x[i], z[j]);
+
+                val2 = omega_b(x[i], z[j], u_new[j][i]) * c_b(x[i], z[j]) * (T_a - u_new[j][i]) + Q_m(x[i], z[j]) + Q_r(x[i], z[j]);
+                
                 val3 = k_zp / (h*h) + k_zm / (h*h) + k_xp / (h*h) + k_xm / (h*h);
+                
                 val4 = omega_b(x[i], z[j], u_new[j][i]) * c_b(x[i], z[j]);
+                
                 u_new[j][i] = (val1 + val2) / (val3 + val4);
                 
             }

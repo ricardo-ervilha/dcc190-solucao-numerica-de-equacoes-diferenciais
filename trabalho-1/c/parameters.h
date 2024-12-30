@@ -21,6 +21,12 @@ real T_a; //temperatura arterial
 real T_thresh1, T_thresh2; // Temperatura limiar do omega
 int tamx, tamz;
 real *x, *z;
+
+//Informações do Qr
+real xi1=0.02, yi1=0.055, zi1=0.055, Ai1=0.8e6, ri1=0.6e-3;
+real xi2=0.025, yi2=0.045, zi2=0.045, Ai2=0.7e6, ri2=0.6e-3;
+real xi3=0.015, yi3=0.04, zi3=0.04, Ai3=0.7e6, ri3=0.6e-3;
+
 /*------------------------Função para ler as configurações-------------------------------*/
 
 /*
@@ -61,44 +67,57 @@ int inside_tumor(real x, real z){
 
 /*---------------------Funções Relacionados a Equação Diferencial----=-------------------*/
 
-real Q_m(real x, real y){
-    if(inside_tumor(x,y) == 1)
+real distance(real x1, real z1, real x2, real y2, real z2){
+    return sqrt( pow(x1-x2, 2) + pow(y_fix-y2, 2) + pow(z1-z2, 2) );
+}
+
+real Q_r(real x, real z){
+    real Q_1 = Ai1 * exp(- pow(distance(x, z, xi1, yi1, zi1), 2) / pow(ri1, 2));
+    real Q_2 = Ai2 * exp(- pow(distance(x, z, xi2, yi2, zi2), 2) / pow(ri2, 2));
+    real Q_3 = Ai3 * exp(- pow(distance(x, z, xi3, yi3, zi3), 2) / pow(ri3, 2));
+    return Q_1 + Q_2 + Q_3;
+}
+
+real Q_m(real x, real z){
+    if(inside_tumor(x,z) == 1)
         return 4200;
     else
         return 420;
 }
 
-real c_b(real x, real y){
+real c_b(real x, real z){
     return 4200;
 }
 
-real rho_b(real x, real y){
+real rho_b(real x, real z){
     return 1000;
 }
 
-real omega_b(real x, real y, real T) {
-    if (inside_tumor(x, y) == 1) { // dentro do tumor
-        if (T >= T_a || T <= T_thresh2)
-            return 0.833 - (pow(fmax(T - 37.0, 0), 4.8) / pow(5.438, 3));
-        else
+real omega_b(real x, real z, real T) {
+    if(inside_tumor(x,z) == 1){
+        if(T < T_a)
+            return 0.833;
+        else if( T_a <= T && T <= T_thresh2)
+            return 0.833 - ( pow(T-T_a, 4.8) / pow(5.438, 3) );
+        else;
             return 0.416;
-    } else if (x <= 0.038) { // fora do tumor mas dentro do músculo
-        if (T <= T_thresh1)
-            return 0.36 + 0.36 * exp(-pow(T - 45.0, 2) / 12);
-        else
-            return 0.72;
-    } else if (x <= 0.048) { // fora do tumor mas dentro da gordura
-        if (T <= T_thresh1)
-            return 0.36 + 0.36 * exp(-pow(T - 45.0, 2) / 12);
+    }else if(x <= muscle_thick){
+        if(T <= T_thresh1)
+            return 0.45 + 3.55 * exp(- (pow(T-T_thresh1, 2) / 12));
         else
             return 4.0;
-    } else { // fora do tumor mas dentro da derme
+    }else if(x <= muscle_thick + fat_thick){
+        if(x <= T_thresh1)
+            return 0.36 + 0.36 * exp(- (pow(T-T_thresh1, 2) / 12));
+        else
+            return 0.72;
+    }else{
         return 0.5;
     }
 }
 
-real k(real x, real y){
-    if(inside_tumor(x,y) == 1)
+real k(real x, real z){
+    if(inside_tumor(x,z) == 1)
         return 0.55;
     else if(x <= muscle_thick)
         return 0.45;
