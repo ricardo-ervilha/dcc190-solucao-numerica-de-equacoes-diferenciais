@@ -6,44 +6,33 @@
 
 /*Arquivo responsável pelo controle das variáveis do problema. Isso inclui constantes, variáveis globais, funções para definir/lidar com configurações e mais.*/
 
-/*--------------------------------CONSTANTES---------------------------------------------*/
-#define real float  // facilitando trocar tipo de ponto flutuante depois
+/*--------------------------------Constantes---------------------------------------------*/
+#define real double 
 
 /*--------------------------------Parâmetros---------------------------------------------*/
-int Ix, Iy; // Número de pontos na discretização de x e de y
-real x_tumor, y_tumor, radius; // Coordenadas do centro do tumor & raio do tumor
-real x_0, x_f, y_0, y_f; // x_0 <= x <= x_f | y_0 <= y <= y_f
-real epsilon_max;  // Tolerância do erro
-int iter; // Número de iterações
-real T_a; // Temperatura arterial
-real u_a, u_b, u_c, u_d; // Condições de Contorno
-/*
-                                u_b (Neumann)
-                    ------------------------------------
-                    |                                  |
-                    |                                  |
-                    |                                  |
-                    |                                  |
-    u_a (Dirichlet) |                                  | u_c (Neumann)
-                    |                                  |
-                    |                                  |
-                    |                                  |
-                    |                                  |
-                    ------------------------------------
-                                u_d (Neumann)
-*/
-
-
+real h; //discretização.
+real y_fix; //y_fixado. 
+real muscle_thick, fat_thick, dermis_thick; //grossura das camadas
+real xt1, yt1, zt1, rt1, xt2, yt2, zt2, rt2; //dados dos tumores 1 e 2.
+real x0, xf, z0, zf; //intervalos 
+real tol; //tolerancia do gauss-seidel 
+int max_iter; //máximo de iterações do gauss-sedeil
+real T_a; //temperatura arterial
+real T_thresh1, T_thresh2; // Temperatura limiar do omega
+int tamx, tamz;
+real *x, *z;
 /*------------------------Função para ler as configurações-------------------------------*/
 
 /*
-Ix Iy
-x_tumor y_tumor radius
-x_0 x_f y_0 y_f
-epsilon_max
-iter
+h
+y_fix
+muscle_thick fat_thick dermis_thcik
+xt1 yt1 zt1 rt1 xt2 yt2 zt2 rt2
+x0 xf z0 zf
 T_a
-u_a u_b u_c u_d
+T_thresh1 T_thresh2
+tol
+max_iter
 */
 void fill_values(char* filename){
     FILE *fptr;
@@ -54,83 +43,73 @@ void fill_values(char* filename){
         printf("Ocorreu um erro durante a abertura do arquivo.\n");
     }
     
-    if (fscanf(fptr, "%d %d %f %f %f %f %f %f %f %f %d %f %f %f %f %f",
-               &Ix, &Iy, &x_tumor, &y_tumor, &radius, &x_0, &x_f, &y_0, &y_f, &epsilon_max, &iter, &T_a, &u_a, &u_b, &u_c, &u_d) != 16) {
+    if (fscanf(fptr, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %d",
+               &h, &y_fix, &muscle_thick, &fat_thick, &dermis_thick, &xt1, &yt1, &zt1, &rt1, &xt2, &yt2, &zt2, &rt2, &x0, &xf, &z0, &zf, &T_a, &T_thresh1, &T_thresh2, &tol, &max_iter) != 22) {
         printf("Erro ao ler os dados do arquivo.\n");
         fclose(fptr);
     }
 
-    Ix += 1; //incluindo x = x_f, por causa do np.arange(0, 1+h, h);
-    Iy += 1; //incluindo y = y_f, por causa do np.arange(0, 1+h, h);
-
     fclose(fptr);
+}
+
+int inside_tumor(real x, real z){
+    real dist_t1 = (x - xt1) * (x - xt1) + (z - zt1) * (z - zt1) + (y_fix - yt1) * (y_fix - yt1);
+    real dist_t2 = (x - xt2) * (x - xt2) + (z - zt2) * (z - zt2) + (y_fix - yt2) * (y_fix - yt2);
+
+    return dist_t1 <= rt1 * rt1 || dist_t2 <= rt2 * rt2;
 }
 
 /*---------------------Funções Relacionados a Equação Diferencial----=-------------------*/
 
-/*Função auxiliar para descobrir se um dado ponto está dentro do tumor.*/
-int inside_circle(real x, real y){
-    return sqrt( pow(x-x_tumor, 2) + pow(y-y_tumor, 2) ) <= radius*radius;
-}
-
-/*Geração de calor metabólica*/
 real Q_m(real x, real y){
-    if(inside_circle(x, y) == 1) //dentro do tumor
-        return 4200.0; 
-    else if(x < 0.038) //fora do tumor mas dentro do músculo
-        return 420.0;
-    else if(x < 0.048) //fora do tumor mas dentro da gordura
-        return 420.0;
-    else //fora do tumor mas dentro da derme
-        return 420.0;
+    if(inside_tumor(x,y) == 1)
+        return 4200;
+    else
+        return 420;
 }
 
-/*Calor específico do sangue*/
 real c_b(real x, real y){
-    if(inside_circle(x, y) == 1) //dentro do tumor
-        return 4200.0;
-    else if(x < 0.038) //fora do tumor mas dentro do músculo
-        return 4200.0;
-    else if(x < 0.048) //fora do tumor mas dentro da gordura
-        return 4200.0;
-    else //fora do tumor mas dentro da derme
-        return 4200.0;
+    return 4200;
 }
 
-/*Densidade sanguínea*/
 real rho_b(real x, real y){
-    if(inside_circle(x, y) == 1) //dentro do tumor
-        return 1000.0;
-    else if(x < 0.038) //fora do tumor mas dentro do músculo
-        return 1000.0;
-    else if(x < 0.048) //fora do tumor mas dentro da gordura
-        return 1000.0;
-    else //fora do tumor mas dentro da derme
-        return 1000.0;
+    return 1000;
 }
 
-/*Taxa de perfusão sanguínea*/
-real omega_b(real x, real y){
-    if(inside_circle(x, y) == 1) //dentro do tumor
-        return 4200.0;
-    else if(x < 0.038) //fora do tumor mas dentro do músculo
-        return 420.0;
-    else if(x < 0.048) //fora do tumor mas dentro da gordura
-        return 420.0;
-    else //fora do tumor mas dentro da derme
-        return 420.0;
-}
-
-/*Condutividade térmica do sangue.*/
-real k(real x, real y){ //REVIEW: Considerar Média Harmônica
-    if(inside_circle(x, y) == 1) //dentro do tumor
-        return 0.757981;
-    else if(x < 0.038) //fora do tumor mas dentro do músculo
-        return 1.87895;
-    else if(x < 0.048) //fora do tumor mas dentro da gordura
-        return 0.504908;
-    else //fora do tumor mas dentro da derme
+real omega_b(real x, real y, real T) {
+    if (inside_tumor(x, y) == 1) { // dentro do tumor
+        if (T >= T_a || T <= T_thresh2)
+            return 0.833 - (pow(fmax(T - 37.0, 0), 4.8) / pow(5.438, 3));
+        else
+            return 0.416;
+    } else if (x <= 0.038) { // fora do tumor mas dentro do músculo
+        if (T <= T_thresh1)
+            return 0.36 + 0.36 * exp(-pow(T - 45.0, 2) / 12);
+        else
+            return 0.72;
+    } else if (x <= 0.048) { // fora do tumor mas dentro da gordura
+        if (T <= T_thresh1)
+            return 0.36 + 0.36 * exp(-pow(T - 45.0, 2) / 12);
+        else
+            return 4.0;
+    } else { // fora do tumor mas dentro da derme
         return 0.5;
+    }
+}
+
+real k(real x, real y){
+    if(inside_tumor(x,y) == 1)
+        return 0.55;
+    else if(x <= muscle_thick)
+        return 0.45;
+    else if(x <= muscle_thick + fat_thick)
+        return 0.21;
+    else
+        return 0.4;
+}
+
+real k_harm(real k1, real k2){
+    return (2 * k1 * k2) / (k1 + k2);
 }
 
 #endif

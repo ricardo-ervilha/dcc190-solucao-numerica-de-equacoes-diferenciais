@@ -2,6 +2,8 @@
     "files.associations": {
         "string.h": "c",
         "cmath": "cpp",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "random": "cpp",
+        "limits": "cpp"
     }
 }

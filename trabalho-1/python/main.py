@@ -1,27 +1,8 @@
 import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-import seaborn as sns
-mpl.use('Agg')
-
-data = np.genfromtxt("../inout/exercise.csv", delimiter=',')
-
-size = int(np.sqrt(data.shape[0]))
-u = data.reshape(size, size)
-
-h = 0.05
-x = np.arange(0, 1+h, h)
-y = np.arange(0, 1+h, h)
-
-# print(u)
-
-X, Y = np.meshgrid(x, y)
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-
-ax.plot_wireframe(X, Y, u)
-
-plt.ylabel('y')
-plt.xlabel('x')
-
-plt.savefig('../inout/exercise.png')
+from utils import read_configs, read_matrix, plot_graph
+   
+if __name__ == "__main__":    
+    steady_state = read_matrix("../inout/steady_state.bin")
+    configs = read_configs("../inout/config.txt")
+    plot_graph("steady_state", steady_state, configs['x0'], configs['xf'], configs['z0'], configs['zf'], True, f"h = {configs['h']} e tol = {configs['tol']}")
+    

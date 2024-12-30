@@ -2,16 +2,15 @@
 
 #compilação
 cd c
-gcc main.c -o ../exe/main -lm
+gcc main.c -o ../exec/main -lm
 
 if [ $? -eq 0 ]; then
     #execução
-    cd ../exe
+    cd ../exec
     ./main
 else
     echo "Erro na compilação"
 fi
 
-#plot do gráfico
 cd ../python
 python main.py
