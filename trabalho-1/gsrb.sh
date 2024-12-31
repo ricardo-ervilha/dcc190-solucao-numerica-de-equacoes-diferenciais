@@ -2,12 +2,12 @@
 
 #compilação
 cd c
-gcc main.c -o ../exec/main -lm
+gcc -o ../exec/gsrb gsrb.c -O3 -lm -fopenmp
 
 if [ $? -eq 0 ]; then
     #execução
     cd ../exec
-    ./main
+    ./gsrb
 else
     echo "Erro na compilação"
 fi

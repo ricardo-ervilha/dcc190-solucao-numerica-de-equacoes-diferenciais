@@ -152,6 +152,10 @@ void copy(real** origin, real** destiny){
     }
 }
 
+//-----------------------------------------------------------------------------------------
+//Parte do Gauss Seidel Red Black
+
+
 
 #endif
 
