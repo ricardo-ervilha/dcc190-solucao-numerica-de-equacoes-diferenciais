@@ -6,70 +6,13 @@ import sys
 import numpy as np
 import scienceplots
 from matplotlib.colors import ListedColormap
+from matplotlib.ticker import FuncFormatter
 
 mpl.use('Agg')
 
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from matplotlib.patches import Patch
-
-def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title):
-    with plt.style.context('science'):
-        fig, ax = plt.subplots(figsize=(7, 7))
-        im = ax.imshow(matrix, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='viridis')
-        
-        if colorbar:
-            cbar = fig.colorbar(im, ax=ax, orientation='vertical')
-            cbar.ax.tick_params(labelsize=16)
-        
-        plt.title(f"{title}", fontsize=18)
-        ax.xaxis.set_tick_params(labelsize=13)
-        ax.yaxis.set_tick_params(labelsize=13)
-        ax.set_xlabel('x-axis (m)', fontsize=15)
-        ax.set_ylabel('z-axis (m)', fontsize=15)
-        plt.tight_layout()
-        plt.savefig(f"../inout/{filename}.png", dpi=300)
-        plt.close()
-
-
-def plot_tissue(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title):
-    colors = [
-        "#E2B8B4",  # Derme
-        "#FFDE21",  # Gordura
-        "#c61a1b",  # Músculo
-        "#5A315D",  # Tumor
-    ]
-    
-    custom_cmap = ListedColormap(colors, name="Custom")
-    categories = ["Derme", "Gordura", "Músculo", "Tumor"]
-    
-    legend_patches = [
-        Patch(facecolor=color, label=category)
-        for color, category in zip(colors, categories)
-    ]
-    
-    with plt.style.context('science'):
-        fig, ax = plt.subplots(figsize=(7, 7))
-        im = ax.imshow(matrix, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap=custom_cmap)
-        
-        if colorbar:
-            fig.colorbar(im, ax=ax, orientation='vertical')
-        
-        plt.title(f"{title}", fontsize=18)
-        ax.xaxis.set_tick_params(labelsize=13)
-        ax.yaxis.set_tick_params(labelsize=13)
-        
-        legend = ax.legend(
-            handles=legend_patches,
-            loc="center left",
-            bbox_to_anchor=(1.05, 0.5),
-            fontsize=14,
-        )
-        
-        plt.tight_layout()
-        plt.savefig(f"../inout/{filename}.png", dpi=300)
-        plt.close()
-
 
 def read_configs(filename):
     data = {}
@@ -99,11 +42,90 @@ def read_configs(filename):
     
     return data
 
-def read_matrix(filename):
+def read_matrix(filename, tamz, tamx):
+    
     with open(filename, 'rb') as f:
-        tamz = np.fromfile(f, dtype=np.int32, count=1)[0]
-        tamx = np.fromfile(f, dtype=np.int32, count=1)[0]
-        
         tissue = np.fromfile(f, dtype=np.float64).reshape((tamz, tamx))
         
     return tissue
+
+#------------------------------------------------------------------------------------------
+
+def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title):
+    # Custom formatter for ticks
+    def format_ticks(value, _):
+        return f"{value:.2f}".rstrip("0").rstrip(".")
+    formatter = FuncFormatter(format_ticks)
+    with plt.style.context('science'):
+        fig, ax = plt.subplots(figsize=(7, 7))
+        im = ax.imshow(matrix, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='coolwarm')
+        
+        if colorbar:
+            cbar = fig.colorbar(im, ax=ax, orientation='vertical')
+            cbar.ax.tick_params(labelsize=16)
+        
+        ax.xaxis.set_major_formatter(formatter)
+        ax.yaxis.set_major_formatter(formatter)
+        
+        plt.title(f"{title}", fontsize=18)
+        ax.xaxis.set_tick_params(labelsize=13)
+        ax.yaxis.set_tick_params(labelsize=13)
+        ax.set_xlabel('x-axis (m)', fontsize=15)
+        ax.set_ylabel('z-axis (m)', fontsize=15)
+        plt.tight_layout()
+        plt.savefig(f"../inout/{filename}.png", dpi=300)
+        plt.close()
+
+
+def plot_tissue(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title):
+    colors = [
+        "#ed8479",  # Derme
+        "#edd12f",  # Gordura
+        "#b81f20",  # Músculo
+        "#6d3f70",  # Tumor
+    ]
+    
+    custom_cmap = ListedColormap(colors, name="Custom")
+    categories = ["Derme", "Gordura", "Músculo", "Tumor"]
+    
+    legend_patches = [
+        Patch(facecolor=color, label=category)
+        for color, category in zip(colors, categories)
+    ]
+    
+    # Custom formatter for ticks
+    def format_ticks(value, _):
+        return f"{value:.2f}".rstrip("0").rstrip(".")
+    
+    formatter = FuncFormatter(format_ticks)
+    
+    with plt.style.context('science'):
+        fig, ax = plt.subplots(figsize=(7, 7))
+        im = ax.imshow(matrix, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap=custom_cmap)
+        
+        if colorbar:
+            fig.colorbar(im, ax=ax, orientation='vertical')
+        
+        plt.title(f"{title}", fontsize=14)
+        ax.xaxis.set_tick_params(labelsize=14)
+        ax.yaxis.set_tick_params(labelsize=14)
+        ax.set_xlabel("eixo-x (m)", fontsize=14)
+        ax.set_ylabel("eixo-z (m)", fontsize=14)
+        
+        # Apply the formatter
+        ax.xaxis.set_major_formatter(formatter)
+        ax.yaxis.set_major_formatter(formatter)
+        
+        legend = ax.legend(
+            handles=legend_patches,
+            loc="upper right",  # Ajuste de posição
+            fontsize=10,        # Reduz o tamanho da fonte
+            frameon=True,       # Adiciona uma moldura
+            framealpha=0.7,     # Define a transparência da moldura
+            borderpad=0.5,      # Reduz o preenchimento interno
+            labelspacing=0.4,   # Reduz o espaçamento entre os itens
+        )
+        
+        plt.tight_layout()
+        plt.savefig(f"../inout/{filename}.png", dpi=300)
+        plt.close()
