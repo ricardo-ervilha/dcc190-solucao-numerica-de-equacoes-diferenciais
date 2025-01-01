@@ -99,7 +99,7 @@ real omega_b(real x, real z, real T) {
             return 0.833;
         else if( T_a <= T && T <= T_thresh2)
             return 0.833 - ( pow(T-T_a, 4.8) / pow(5.438, 3) );
-        else;
+        else
             return 0.416;
     }else if(x <= muscle_thick){
         if(T <= T_thresh1)

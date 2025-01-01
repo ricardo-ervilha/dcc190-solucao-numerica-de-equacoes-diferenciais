@@ -1,20 +1,25 @@
 #include "utils.h"
 #include <time.h>
 #include <omp.h>
-#define NUM_THREADS 2
+#include <string.h>
 
 int main(int argc, char* argv[]){
+
+    char* fn1 = argv[1];
+    char* fn2 = argv[2];
+    int NUM_THREADS = atoi(argv[3]);
+
     fill_values("../inout/config.txt");
     init_vars();
 
     real** u_new = alloc_matrix(tamz, tamx, T_a);
-    real** u = alloc_matrix(tamz, tamx, T_a);
 
     int iter = 0;
     int j_p, j_m, i_p, i_m;
+    real error = HUGE_VAL;
     real k_zp, k_zm, k_xp, k_xm;
     real val1, val2, val3, val4;
-    real diff;
+    real m, diff;
     real tmp;
     int i, j;
 
@@ -22,9 +27,9 @@ int main(int argc, char* argv[]){
     double cpu_time_used;
 
     start = clock();
-    while(iter < max_iter){
-        diff = 0;
-        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j) reduction(+:diff)
+    while(iter < max_iter && error > tol){
+        m = -HUGE_VAL;
+        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j, diff) reduction(max:m)
         {
             #pragma omp for
             for(j = 0; j < tamz; j++){
@@ -52,14 +57,18 @@ int main(int argc, char* argv[]){
                         
                         u_new[j][i] = (val1 + val2) / (val3 + val4);   
 
-                        diff += fabs(u_new[j][i] - tmp); 
+                        diff = fabs(u_new[j][i] - tmp); 
+
+                        if(diff > m)
+                            m = diff;
                     }
                 }
             }  
             #pragma omp barrier
+            
         }
 
-        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j) reduction(+:diff)
+        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j, diff) reduction(max:m)
         {
             #pragma omp for
             for(j = 0; j < tamz; j++){
@@ -87,24 +96,28 @@ int main(int argc, char* argv[]){
                         
                         u_new[j][i] = (val1 + val2) / (val3 + val4);   
 
-                        diff += fabs(u_new[j][i] - tmp); 
+                        diff = fabs(u_new[j][i] - tmp); 
+
+                        if(diff > m)
+                            m = diff;
                     }
                 }
             } 
             #pragma omp barrier 
         }
         iter += 1;
-        printf("Difference after %d iterations: %f\n", iter, diff);
+        error = m;
+        // printf("Difference after %d iterations: %f\n", iter, error);
     }
 
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Tempo gasto: %f\n", cpu_time_used);
+    // printf("Tempo gasto: %f\n", cpu_time_used);
 
-    export_output("../inout/steady_state.bin", u_new);
+    export_output(fn1, u_new);
+    export_data(fn2, cpu_time_used, iter);
 
     free(x);
     free(z);
     free_matrix(u_new);
-    free_matrix(u);
 }

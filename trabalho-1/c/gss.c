@@ -1,12 +1,15 @@
 #include "utils.h"
 #include <time.h>
 
+
 int main(int argc, char* argv[]){
+    char* fn1 = argv[1];
+    char* fn2 = argv[2];
+    
     fill_values("../inout/config.txt");
     init_vars();
 
     real** u_new = alloc_matrix(tamz, tamx, T_a);
-    real** u = alloc_matrix(tamz, tamx, T_a);
 
     int iter = 0;
     real error = HUGE_VAL;
@@ -14,13 +17,20 @@ int main(int argc, char* argv[]){
     real k_zp, k_zm, k_xp, k_xm;
     real val1, val2, val3, val4;
 
+    real tmp;
+    real diff;
+
     clock_t start, end;
     double cpu_time_used;
 
     start = clock();
     while(iter < max_iter && error > tol){
+        real max = -HUGE_VAL;
         for(int j = 0; j < tamz; j++){
             for(int i = 1; i < tamx; i++){
+
+                tmp = u_new[j][i]; //guardando o valor antigo temporariamente
+
                 j_p = (j == tamz - 1) ? (j - 1) : (j + 1);
                 j_m = (j == 0) ? (j + 1) : (j - 1);
                 i_p = (i == tamx - 1) ? (i - 1) : (i + 1);
@@ -41,26 +51,30 @@ int main(int argc, char* argv[]){
                 
                 u_new[j][i] = (val1 + val2) / (val3 + val4);
                 
+                diff = fabs(u_new[j][i] - tmp);
+
+                if(diff > max)
+                    max = diff;
             }
         }
-        error = calculate_error(u_new, u);
+
+        error = max;
         
-        if(iter%100 == 0)
-            printf("Iteração = %d, com erro = %lf\n", iter, error);
+        // if(iter%100 == 0)
+        //     printf("Iteração = %d, com erro = %lf\n", iter, error);
         iter += 1;
         
-        copy(u_new, u);
     }
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Tempo gasto: %f\n", cpu_time_used);
 
-    printf("Demorou %d iterações. Erro final: %lf\n", iter, error);
+    // printf("Tempo gasto: %f\n", cpu_time_used);
+    // printf("Demorou %d iterações. Erro final: %.10lf\n", iter, error);
 
-    export_output("../inout/steady_state.bin", u_new);
+    export_output(fn1, u_new);
+    export_data(fn2, cpu_time_used, iter);
 
     free(x);
     free(z);
     free_matrix(u_new);
-    free_matrix(u);
 }

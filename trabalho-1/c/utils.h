@@ -116,13 +116,24 @@ void export_output(char* filename, real** matrix){
         printf("Erro ao criar/abrir arquivo.\n");
     }
 
-    fwrite(&tamz, sizeof(int), 1, fptr);
-    fwrite(&tamx, sizeof(int), 1, fptr);
-
     for (int j = 0; j < tamz; j++) {
         fwrite(matrix[j], sizeof(real), tamx, fptr);
     }
 
+    fclose(fptr);
+}
+
+void export_data(char *filename, double time, int num_iters){
+    FILE *fptr = fopen(filename, "w");
+    
+    if(fptr == NULL){
+        printf("Erro ao criar/abrir arquivo.\n");
+    }
+
+    fprintf(fptr, "%lf\n", h);
+    fprintf(fptr, "%.6f\n", time);
+    fprintf(fptr, "%d\n", num_iters);  
+    
     fclose(fptr);
 }
 

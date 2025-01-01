@@ -1,6 +1,5 @@
 #include "utils.h"
 
-
 int main(int argc, char* argv[]){
     fill_values("../inout/config.txt");
     init_vars();
