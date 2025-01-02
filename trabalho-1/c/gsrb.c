@@ -3,8 +3,11 @@
 #include <omp.h>
 #include <string.h>
 
-#define NUM_THREADS 2
+#define NUM_THREADS 4
 
+// 392 segundos sequencial x 317 segundos paralelo 4 threads.
+
+//Dentro da pasta c (aparentemente está dando metade)
 // gcc -Wall -o ../exec/gsrb gsrb.c -O3 -lm -fopenmp && ../exec/gsrb
 
 int main(int argc, char* argv[]){
@@ -23,7 +26,7 @@ int main(int argc, char* argv[]){
     real error = HUGE_VAL;
     real k_zp, k_zm, k_xp, k_xm;
     real val1, val2, val3, val4;
-    real m, diff;
+    real diff;
     real tmp;
     int i, j;
 
@@ -32,8 +35,8 @@ int main(int argc, char* argv[]){
 
     start = omp_get_wtime();
     while(error > tol){
-        m = -HUGE_VAL;
-        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j, diff) reduction(max:m)
+        diff = 0;
+        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j) reduction(+:diff)
         {
             #pragma omp for
             for(j = 0; j < tamz; j++){
@@ -61,10 +64,8 @@ int main(int argc, char* argv[]){
                         
                         u_new[j][i] = (val1 + val2) / (val3 + val4);   
 
-                        diff = fabs(u_new[j][i] - tmp); 
+                        diff += fabs(u_new[j][i] - tmp); 
 
-                        if(diff > m)
-                            m = diff;
                     }
                 }
             }  
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]){
             
         }
 
-        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j, diff) reduction(max:m)
+        #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j) reduction(+:diff)
         {
             #pragma omp for
             for(j = 0; j < tamz; j++){
@@ -100,17 +101,14 @@ int main(int argc, char* argv[]){
                         
                         u_new[j][i] = (val1 + val2) / (val3 + val4);   
 
-                        diff = fabs(u_new[j][i] - tmp); 
-
-                        if(diff > m)
-                            m = diff;
+                        diff += fabs(u_new[j][i] - tmp); 
                     }
                 }
             } 
             #pragma omp barrier 
         }
         iter += 1;
-        error = m;
+        error = diff;
         
         if(iter%100 == 0)
             printf("Iteração = %d, com erro = %lf\n", iter, error);
@@ -120,7 +118,7 @@ int main(int argc, char* argv[]){
     cpu_time_used = (end - start);
     printf("Tempo gasto: %f\n", cpu_time_used);
 
-    // export_output(fn1, u_new);
+    // export_output("../inout/steady_state.bin", u_new);
     // export_data(fn2, cpu_time_used, iter);
 
     free(x);

@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <time.h>
 
+//Dentro da pasta c
 // gcc -Wall -o ../exec/gss gss.c -O3 -lm && ../exec/gss
 
 int main(int argc, char* argv[]){
