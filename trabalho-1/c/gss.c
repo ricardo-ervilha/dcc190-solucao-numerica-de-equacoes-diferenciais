@@ -5,8 +5,8 @@
 // gcc -Wall -o ../exec/gss gss.c -O3 -lm && ../exec/gss
 
 int main(int argc, char* argv[]){
-    // char* fn1 = argv[1];
-    // char* fn2 = argv[2];
+    char* fn1 = argv[1];
+    char* fn2 = argv[2];
     
     fill_values("../inout/config.txt");
     init_vars();
@@ -60,19 +60,19 @@ int main(int argc, char* argv[]){
 
         error = diff;
         
-        if(iter%100 == 0)
-            printf("Iteração = %d, com erro = %lf\n", iter, error);
+        // if(iter%100 == 0)
+            // printf("Iteração = %d, com erro = %lf\n", iter, error);
         iter += 1;
         
     }
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    printf("Tempo gasto: %f\n", cpu_time_used);
-    printf("Demorou %d iterações. Erro final: %.10lf\n", iter, error);
+    // printf("Tempo gasto: %f\n", cpu_time_used);
+    // printf("Demorou %d iterações. Erro final: %.10lf\n", iter, error);
 
-    // export_output(fn1, u_new);
-    // export_data(fn2, cpu_time_used, iter);
+    export_output(fn1, u_new);
+    export_data(fn2, cpu_time_used, iter);
 
     free(x);
     free(z);
