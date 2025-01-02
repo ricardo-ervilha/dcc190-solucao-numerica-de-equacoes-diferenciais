@@ -1,10 +1,11 @@
 #include "utils.h"
 #include <time.h>
 
+// gcc -Wall -o ../exec/gss gss.c -O3 -lm && ../exec/gss
 
 int main(int argc, char* argv[]){
-    char* fn1 = argv[1];
-    char* fn2 = argv[2];
+    // char* fn1 = argv[1];
+    // char* fn2 = argv[2];
     
     fill_values("../inout/config.txt");
     init_vars();
@@ -24,8 +25,8 @@ int main(int argc, char* argv[]){
     double cpu_time_used;
 
     start = clock();
-    while(iter < max_iter && error > tol){
-        real max = -HUGE_VAL;
+    while(error > tol){
+        diff = 0;
         for(int j = 0; j < tamz; j++){
             for(int i = 1; i < tamx; i++){
 
@@ -51,28 +52,26 @@ int main(int argc, char* argv[]){
                 
                 u_new[j][i] = (val1 + val2) / (val3 + val4);
                 
-                diff = fabs(u_new[j][i] - tmp);
+                diff += fabs(u_new[j][i] - tmp);
 
-                if(diff > max)
-                    max = diff;
             }
         }
 
-        error = max;
+        error = diff;
         
-        // if(iter%100 == 0)
-        //     printf("Iteração = %d, com erro = %lf\n", iter, error);
+        if(iter%100 == 0)
+            printf("Iteração = %d, com erro = %lf\n", iter, error);
         iter += 1;
         
     }
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    // printf("Tempo gasto: %f\n", cpu_time_used);
-    // printf("Demorou %d iterações. Erro final: %.10lf\n", iter, error);
+    printf("Tempo gasto: %f\n", cpu_time_used);
+    printf("Demorou %d iterações. Erro final: %.10lf\n", iter, error);
 
-    export_output(fn1, u_new);
-    export_data(fn2, cpu_time_used, iter);
+    // export_output(fn1, u_new);
+    // export_data(fn2, cpu_time_used, iter);
 
     free(x);
     free(z);

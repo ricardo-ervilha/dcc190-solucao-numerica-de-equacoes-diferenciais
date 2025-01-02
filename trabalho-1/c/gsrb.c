@@ -3,11 +3,15 @@
 #include <omp.h>
 #include <string.h>
 
+#define NUM_THREADS 2
+
+// gcc -Wall -o ../exec/gsrb gsrb.c -O3 -lm -fopenmp && ../exec/gsrb
+
 int main(int argc, char* argv[]){
 
-    char* fn1 = argv[1];
-    char* fn2 = argv[2];
-    int NUM_THREADS = atoi(argv[3]);
+    // char* fn1 = argv[1];
+    // char* fn2 = argv[2];
+    // int NUM_THREADS = atoi(argv[3]);
 
     fill_values("../inout/config.txt");
     init_vars();
@@ -23,11 +27,11 @@ int main(int argc, char* argv[]){
     real tmp;
     int i, j;
 
-    clock_t start, end;
+    double start, end;
     double cpu_time_used;
 
-    start = clock();
-    while(iter < max_iter && error > tol){
+    start = omp_get_wtime();
+    while(error > tol){
         m = -HUGE_VAL;
         #pragma omp parallel num_threads(NUM_THREADS) private(tmp, i, j, diff) reduction(max:m)
         {
@@ -107,15 +111,17 @@ int main(int argc, char* argv[]){
         }
         iter += 1;
         error = m;
-        // printf("Difference after %d iterations: %f\n", iter, error);
+        
+        if(iter%100 == 0)
+            printf("Iteração = %d, com erro = %lf\n", iter, error);
     }
 
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    // printf("Tempo gasto: %f\n", cpu_time_used);
+    end = omp_get_wtime();
+    cpu_time_used = (end - start);
+    printf("Tempo gasto: %f\n", cpu_time_used);
 
-    export_output(fn1, u_new);
-    export_data(fn2, cpu_time_used, iter);
+    // export_output(fn1, u_new);
+    // export_data(fn2, cpu_time_used, iter);
 
     free(x);
     free(z);
