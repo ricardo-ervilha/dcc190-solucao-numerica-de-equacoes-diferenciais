@@ -7,7 +7,7 @@ if __name__ == "__main__":
     tamz = int((configs['zf'] - configs['z0']) / configs['h']) + 1
     tamx = int((configs['xf'] - configs['x0']) / configs['h']) + 1
     
-    tissue = read_matrix("../inout/steady_state_rb.bin", tamz, tamx)
+    tissue = read_matrix("../inout/data/gss/h_2.bin", tamz, tamx)
     
-    plot_steady_state("steady", tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], False, "")
+    plot_steady_state("gss_steady_h2", tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], False, "")
     

@@ -27,7 +27,7 @@ if __name__ == "__main__":
         subprocess.run(["../exec/gss", fn1, fn2])
             
         #roda 1 vez pra cada numero de threads
-        for t in [2,3,4]: # numero de threads
+        for t in [2,3,4,5,6]: # numero de threads
             print("Número de threads: ", t)
            
             subprocess.run(compilegsrb)

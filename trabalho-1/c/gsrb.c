@@ -115,7 +115,7 @@ int main(int argc, char* argv[]){
 
     end = omp_get_wtime();
     cpu_time_used = (end - start);
-    // printf("Tempo gasto: %f\n", cpu_time_used);
+    printf("Demorou %d iterações. Erro final: %.10lf\n", iter, error);
 
     export_output(fn1, u_new);
     export_data(fn2, cpu_time_used, iter);

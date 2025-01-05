@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     # Processando os arquivos GSRB
     for i in range(1, 4):
-        for t in [2, 3, 4]:
+        for t in [2, 3, 4, 5, 6]:
             with open(f'../inout/data/gsrb/h_{i}_threads_{t}.txt') as f:
                 content = f.readlines()
                 time = float(content[1].strip())
