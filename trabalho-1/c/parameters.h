@@ -68,13 +68,14 @@ int inside_tumor(real x, real z){
 /*---------------------Funções Relacionados a Equação Diferencial----=-------------------*/
 
 real distance(real x1, real z1, real x2, real y2, real z2){
-    return sqrt( pow(x1-x2, 2) + pow(y_fix-y2, 2) + pow(z1-z2, 2) );
+    return (x1-x2)*(x1-x2) + (y_fix-y2)*(y_fix-y2) + (z1-z2)*(z1-z2);
 }
 
+// Ai * exp(-r^2 / r0^2)
 real Q_r(real x, real z){
-    real Q_1 = Ai1 * exp(- pow(distance(x, z, xi1, yi1, zi1), 2) / pow(ri1, 2));
-    real Q_2 = Ai2 * exp(- pow(distance(x, z, xi2, yi2, zi2), 2) / pow(ri2, 2));
-    real Q_3 = Ai3 * exp(- pow(distance(x, z, xi3, yi3, zi3), 2) / pow(ri3, 2));
+    real Q_1 = Ai1 * exp(- distance(x, z, xi1, yi1, zi1) / (ri1*ri1));
+    real Q_2 = Ai2 * exp(- distance(x, z, xi2, yi2, zi2) / (ri2*ri2));
+    real Q_3 = Ai3 * exp(- distance(x, z, xi3, yi3, zi3) / (ri3*ri3));
     return Q_1 + Q_2 + Q_3;
 }
 

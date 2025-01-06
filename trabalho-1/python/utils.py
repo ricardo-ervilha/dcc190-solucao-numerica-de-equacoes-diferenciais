@@ -52,6 +52,9 @@ def read_matrix(filename, tamz, tamx):
 #------------------------------------------------------------------------------------------
 
 def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title):
+    points_x = [0.02,0.025,0.015]
+    points_z = [0.055,0.045,0.040]
+    
     # Custom formatter for ticks
     def format_ticks(value, _):
         return f"{value:.2f}".rstrip("0").rstrip(".")
@@ -59,10 +62,12 @@ def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, ti
     with plt.style.context('science'):
         fig, ax = plt.subplots(figsize=(7, 7))
         im = ax.imshow(matrix, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='coolwarm')
+        ax.scatter(points_x, points_z, color='black', marker='x', s=25, label='Pontos de injeção')
         
         if colorbar:
             cbar = fig.colorbar(im, ax=ax, orientation='vertical')
             cbar.ax.tick_params(labelsize=16)
+            cbar.set_label(f'Temperatura ($^\circ$C)', rotation=90, labelpad=15, fontsize=15)
         
         ax.xaxis.set_major_formatter(formatter)
         ax.yaxis.set_major_formatter(formatter)
@@ -70,8 +75,16 @@ def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, ti
         plt.title(f"{title}", fontsize=18)
         ax.xaxis.set_tick_params(labelsize=13)
         ax.yaxis.set_tick_params(labelsize=13)
-        ax.set_xlabel('x-axis (m)', fontsize=15)
-        ax.set_ylabel('z-axis (m)', fontsize=15)
+        ax.set_xlabel('eixo-x (m)', fontsize=15)
+        ax.set_ylabel('eixo-z (m)', fontsize=15)
+        ax.legend(
+            loc="upper right",  # Ajuste de posição
+            fontsize=10,        # Reduz o tamanho da fonte
+            frameon=True,       # Adiciona uma moldura
+            framealpha=0.7,     # Define a transparência da moldura
+            borderpad=0.5,      # Reduz o preenchimento interno
+            labelspacing=0.4,   # Reduz o espaçamento entre os itens)
+        )
         plt.tight_layout()
         plt.savefig(f"../inout/{filename}.png", dpi=300)
         plt.close()
