@@ -108,8 +108,8 @@ int main(int argc, char* argv[]){
         iter += 1;
         error = diff;
         
-        // if(iter%100 == 0)
-            // printf("Iteração = %d, com erro = %lf\n", iter, error);
+        if(iter%1000 == 0)
+            printf("Iteração = %d, com erro = %lf\n", iter, error);
     }
 
     end = omp_get_wtime();

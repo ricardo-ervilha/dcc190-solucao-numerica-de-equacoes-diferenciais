@@ -23,7 +23,7 @@ int tamx, tamz;
 real *x, *z;
 
 //Informações do Qr
-real xi1=0.02, yi1=0.045, zi1=0.055, Ai1=0.8e6, ri1=0.6e-3;
+real xi1=0.02,  yi1=0.045, zi1=0.055, Ai1=0.8e6, ri1=0.6e-3;
 real xi2=0.025, yi2=0.045, zi2=0.045, Ai2=0.7e6, ri2=0.6e-3;
 real xi3=0.015, yi3=0.045, zi3=0.04, Ai3=0.7e6, ri3=0.6e-3;
 
