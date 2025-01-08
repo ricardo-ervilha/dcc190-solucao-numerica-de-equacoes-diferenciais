@@ -51,44 +51,58 @@ def read_matrix(filename, tamz, tamx):
 
 #------------------------------------------------------------------------------------------
 
-def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title):
-    points_x = [0.02,0.025,0.015]
-    points_z = [0.055,0.045,0.040]
-    
+def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title, tumor_mask):
+    points_x = [0.02, 0.025, 0.015]
+    points_z = [0.055, 0.045, 0.040]
+
     # Custom formatter for ticks
     def format_ticks(value, _):
         return f"{value:.2f}".rstrip("0").rstrip(".")
+    
     formatter = FuncFormatter(format_ticks)
+
     with plt.style.context('science'):
         fig, ax = plt.subplots(figsize=(7, 7))
+
+        # Plot the steady-state matrix
         im = ax.imshow(matrix, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='coolwarm')
+
+        # Scatter points of injection
         ax.scatter(points_x, points_z, color='black', marker='x', s=25, label='Pontos de injeção')
-        
+
+        # Highlight tumor contours
+        tumor_contours = ax.contour(tumor_mask, levels=[0.5], colors='black', linestyles='--',
+                                    extent=[x_min, x_max, y_min, y_max])
+
+        # Add colorbar if requested
         if colorbar:
             cbar = fig.colorbar(im, ax=ax, orientation='vertical')
             cbar.ax.tick_params(labelsize=16)
             cbar.set_label(f'Temperatura ($^\circ$C)', rotation=90, labelpad=15, fontsize=15)
-        
+
+        # Configure axis ticks and labels
         ax.xaxis.set_major_formatter(formatter)
         ax.yaxis.set_major_formatter(formatter)
-        
+
         plt.title(f"{title}", fontsize=18)
         ax.xaxis.set_tick_params(labelsize=13)
         ax.yaxis.set_tick_params(labelsize=13)
         ax.set_xlabel('eixo-x (m)', fontsize=15)
         ax.set_ylabel('eixo-z (m)', fontsize=15)
+
+        # Add legend
         ax.legend(
-            loc="upper right",  # Ajuste de posição
-            fontsize=10,        # Reduz o tamanho da fonte
-            frameon=True,       # Adiciona uma moldura
-            framealpha=0.7,     # Define a transparência da moldura
-            borderpad=0.5,      # Reduz o preenchimento interno
-            labelspacing=0.4,   # Reduz o espaçamento entre os itens)
+            loc="upper right",  # Adjust position
+            fontsize=10,        # Reduce font size
+            frameon=True,       # Add frame
+            framealpha=0.7,     # Set frame transparency
+            borderpad=0.5,      # Reduce internal padding
+            labelspacing=0.4,   # Reduce spacing between items
         )
+
         plt.tight_layout()
         plt.savefig(f"../inout/{filename}.png", dpi=300)
         plt.close()
-
 
 def plot_tissue(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title):
     colors = [
