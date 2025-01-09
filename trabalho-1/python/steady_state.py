@@ -1,5 +1,5 @@
 import numpy as np
-from utils import read_configs, read_matrix, plot_steady_state
+from utils import read_configs, read_matrix, plot_steady_state, plot_fixed_dir
 import sys
  
 if __name__ == "__main__":    
@@ -28,4 +28,6 @@ if __name__ == "__main__":
     # print(tumor_mask)
     
     plot_steady_state(f"{filename}", tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], True, "", tumor_mask)
+
+    # plot_fixed_dir(0.055, 'fixed_z', tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], configs['h'], "")
     

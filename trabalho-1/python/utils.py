@@ -51,6 +51,39 @@ def read_matrix(filename, tamz, tamx):
 
 #------------------------------------------------------------------------------------------
 
+def plot_fixed_dir(z, filename, matrix, x_min, x_max, z_min, z_max, h, title):
+    rocket = sns.color_palette('rocket', 1)
+    with plt.style.context('science'):
+        # Criação do domínio x e z
+        x_values = np.linspace(x_min, x_max, matrix.shape[1])
+        z_values = np.linspace(z_min, z_max, matrix.shape[0])
+        
+        # Mapeamento do z para o índice correspondente
+        z_index = int((z - z_min) / h)
+        
+        # Garantir que o índice z esteja dentro dos limites
+        if z_index < 0 or z_index >= matrix.shape[0]:
+            raise ValueError(f"O valor de z={z} está fora do intervalo permitido [{z_min}, {z_max}].")
+        
+        # Obter a linha correspondente ao z fixado
+        temp_at_z = matrix[z_index, :]
+        
+        # Gerar o gráfico
+        plt.figure(figsize=(6, 6))
+        plt.plot(x_values, temp_at_z, label=f"z = {z:.3f} m", color=rocket[0])
+        
+        # Configurações do gráfico
+        plt.title(title)
+        plt.xlabel("eixo-x (m)", fontsize=14)
+        plt.ylabel("Temperatura (°C)", fontsize=14)
+        plt.legend(loc="upper right", fontsize=14)
+        plt.grid(True)
+        plt.tight_layout()
+        # Salvar o gráfico e fechar
+        plt.savefig(f"../inout/{filename}.png", dpi=300)
+        plt.close()
+
+
 def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max, colorbar, title, tumor_mask):
     points_x = [0.02, 0.025, 0.015]
     points_z = [0.055, 0.045, 0.040]
