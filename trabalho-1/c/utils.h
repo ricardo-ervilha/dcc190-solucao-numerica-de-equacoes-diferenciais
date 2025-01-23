@@ -43,9 +43,9 @@ void free_matrix(void** matrix){
 void print_array(void *array, int size, size_t element_size){
     for (int i = 0; i < size; i++) {
         if (element_size == sizeof(int)) {
-            printf("%d", ((int*)array)[i]);
+            printf("%d ", ((int*)array)[i]);
         } else if (element_size == sizeof(real)) {
-            printf("%f", ((real*)array)[i]);
+            printf("%f ", ((real*)array)[i]);
         }
         if (i < size - 1) {
             printf(", ");
@@ -58,9 +58,9 @@ void print_matrix(void **matrix, size_t element_size){
     for(int j = 0; j < tamz; j++){
         for(int i = 0; i < tamx; i++){
             if (element_size == sizeof(int)) {
-                printf("%d", ((int**)matrix)[j][i]);
+                printf("%d  ", ((int**)matrix)[j][i]);
             }else{
-                printf("%lf", ((real**)matrix)[j][i]);
+                printf("%lf  ", ((real**)matrix)[j][i]);
             }
         }
         printf("\n");
@@ -109,7 +109,7 @@ void generate_hyperthermia_matrix(){
         for(int i = 0; i < tamx; i++)
             Q_r[j][i] = get_values_hyperthermia(x[i], z[j]);
 
-    print_matrix((void**)Q_r, sizeof(real));
+    // print_matrix((void**)Q_r, sizeof(real));
 }
 
 /*-----------------------------------Função Para inicializar vars.-------------------------------*/

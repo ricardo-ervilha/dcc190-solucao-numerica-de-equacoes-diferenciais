@@ -12,5 +12,5 @@ if __name__ == "__main__":
     #recover tissue based on tamz and tamx
     tissue = read_matrix("../inout/tissue/tissue.bin", tamz, tamx, type=np.int32)
 
-    plot_tissue("tissue", tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], False, "")
+    plot_tissue("tissue", tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'])
     

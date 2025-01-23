@@ -2,7 +2,7 @@
 
 #compilação
 cd c
-gcc tissue.c -o ../exec/tissue -lm
+gcc -Wall tissue.c -o ../exec/tissue -lm
 
 if [ $? -eq 0 ]; then
     cd ../exec
