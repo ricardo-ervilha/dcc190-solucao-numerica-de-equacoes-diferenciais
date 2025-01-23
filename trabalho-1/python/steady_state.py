@@ -27,7 +27,7 @@ if __name__ == "__main__":
     
     # print(tumor_mask)
     
-    plot_steady_state(f"{filename}", tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], True, "", tumor_mask)
+    # plot_steady_state(f"{filename}", tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], True, "", tumor_mask)
 
-    # plot_fixed_dir(0.055, 'fixed_z', tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], configs['h'], "")
+    plot_fixed_dir(0.055, 'fixed_z', tissue, configs['x0'], configs['xf'], configs['z0'], configs['zf'], configs['h'], "")
     

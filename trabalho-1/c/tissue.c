@@ -1,14 +1,14 @@
 #include "utils.h"
 
-int main(int argc, char* argv[]){
-    fill_values("../inout/config.txt");
-    init_vars();
-    
-    real** tissue = generate_tissue_matrix();
-    
-    export_output("../inout/tissue.bin", tissue);
+/*Arquivo para gerar os valores do gráfico do tecido (2D).*/
 
-    free_matrix(tissue);
-    free(x);
-    free(z);
+int main(int argc, char* argv[]){
+    read_config_txt("../inout/config.txt"); //read values from config.txt
+    init_vars();
+
+    export_output("../inout/tissue/tissue.bin", (void**) tissue, sizeof(int));
+
+    end_vars();
+    
+    return 0;
 }

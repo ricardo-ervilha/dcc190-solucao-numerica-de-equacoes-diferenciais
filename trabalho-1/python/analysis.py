@@ -46,64 +46,90 @@ def plot_bar_graph(data_time):
 
             plt.savefig(f"../inout/tempo_por_threads_h_{i}.png")
             plt.show()
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def plot_speedup(data_time):
+    # Paleta de cores
     rocket = sns.color_palette('rocket', 3)
     disc = {
         'h_1': '0.001',
         'h_2': '0.0005',
         'h_3': '0.00025'
     }
+    
     with plt.style.context('science'):
         plt.figure(figsize=(10, 6))
-        markers = {"h_1": "o", "h_2": "^", "h_3": "s"}
-        colors = ["#fee090", "#fdae61", "#4575b4"]  # Lista de cores para cada discretização
-
+        
+        # Estilos de linha para discretizações
+        linestyles = {"h_1": "solid", "h_2": "dashed", "h_3": "dotted"}
+        
+        # Iterar sobre as discretizações
         for i in range(1, 4):
             discretizacao = f'h_{i}'
             speedup_data = []
-            for t in [1, 2, 3, 4, 5, 6]:
-                if t == 1:
-                    speedup = 1.0  # Speedup 1 para gss
-                else:
-                    speedup = data_time[discretizacao]["tempo_gss"] / data_time[discretizacao][f'tempo_gsrb_com_{t}_threads']
-                speedup_data.append({
-                    "threads": t,
-                    "speedup": speedup,
-                    "discretizacao": discretizacao
-                })
-
+            
+            # Calcular o speedup para diferentes números de threads
+            for t in range(1, 7):
+                speedup = (
+                    1.0
+                    if t == 1
+                    else data_time[discretizacao]["tempo_gss"]
+                    / data_time[discretizacao][f'tempo_gsrb_com_{t}_threads']
+                )
+                speedup_data.append({"threads": t, "speedup": speedup})
+            
+            # Criar DataFrame com os dados de speedup
             speedup_df = pd.DataFrame(speedup_data)
+            
+            # Plotar o speedup medido
             plt.plot(
-                speedup_df["threads"], 
-                speedup_df["speedup"], 
-                marker=markers[discretizacao], 
+                speedup_df["threads"],
+                speedup_df["speedup"],
                 label=f"$h = {disc[discretizacao]}$",
-                color=rocket[i-1],  # Atribuindo cor da lista para cada discretização,
+                color=rocket[i - 1],
+                marker='x',
+                linewidth=2,
             )
+        
+        # Plotar o speedup ideal
         plt.plot(
-                speedup_df["threads"], 
-                pd.Series([1,2,3,4,5,6]), 
-                label=f"Ideal",
-                color='black',  # Atribuindo cor da lista para cada discretização,
-                linestyle='dashed',
+            [1, 2, 3, 4, 5, 6],
+            [1, 2, 3, 4, 5, 6],
+            color="black",
+            linestyle="dashed",
+            linewidth=2,
         )
-        plt.xlabel("Número de Threads", fontsize=14)
+        
+        # Adicionar texto "linear (ideal)" com inclinação da linha identidade
+        plt.text(
+            4.5, 4.6,  # Posição do texto
+            "linear (ideal)",
+            fontsize=16,
+            color="black",
+            rotation=30,  # Inclinação da linha identidade (y=x)
+            rotation_mode="anchor",
+        )
+        
+        # Configurar o gráfico
+        plt.xlabel("Num. Threads", fontsize=14)
         plt.ylabel("Speedup", fontsize=14)
+        # plt.title("Speedup vs Número de Processadores", fontsize=16)
         plt.legend(
-            loc="upper left",  # Ajuste de posição
-            fontsize=12,        # Reduz o tamanho da fonte
-            frameon=True,       # Adiciona uma moldura
-            # framealpha=0.7,     # Define a transparência da moldura
-            borderpad=0.5,      # Reduz o preenchimento interno
-            labelspacing=0.4,
+            loc="upper left",
+            fontsize=14,
+            frameon=True,
+            borderpad=0.8,
+            labelspacing=0.6,
         )
-        plt.grid(True)
+        plt.grid(True, linestyle="--")
         plt.tight_layout()
-
-        # Salvando o gráfico de speedup
-        plt.savefig("../inout/speedup_por_threads.png")
+        
+        # Salvar e mostrar o gráfico
+        plt.savefig("../inout/speedup_por_threads.png", dpi=300)
         plt.show()
+
 
 
 if __name__ == "__main__":
@@ -135,5 +161,5 @@ if __name__ == "__main__":
     df_time = pd.DataFrame.from_dict(data_time, orient='index')
     df_iter = pd.DataFrame.from_dict(data_iter, orient='index')
 
-    plot_bar_graph(data_time)
+    # plot_bar_graph(data_time)
     plot_speedup(data_time)
