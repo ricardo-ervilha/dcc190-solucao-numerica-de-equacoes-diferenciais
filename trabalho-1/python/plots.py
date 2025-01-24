@@ -61,7 +61,7 @@ def plot_tissue(filename, matrix, x_min, x_max, y_min, y_max):
     # colors and custom legend
     colors = ["#6d3f80", "#b81f20", "#edd12f", "#ed8479"] #colors for tissue
     custom_cmap = ListedColormap(colors, name="Custom")
-    categories = ["Derme", "Gordura", "Músculo", "Tumor"]
+    categories = ["Tumor", "Músculo", "Gordura", "Derme"]
     legend_patches = [
         Patch(facecolor=color, label=category)
         for color, category in zip(colors, categories)
