@@ -1,9 +1,13 @@
 {
     "files.associations": {
+        "*.rs": "rust",
+        "*.f95": "fortran-modern",
         "string.h": "c",
         "cmath": "cpp",
         "stdio.h": "c",
         "random": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "utils.h": "c",
+        "time.h": "c"
     }
 }
