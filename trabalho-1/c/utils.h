@@ -98,7 +98,7 @@ real get_values_hyperthermia(real x, real z){
     real Q_1 = Ai1 * exp(- distance(x, y_fix, z, xi1, yi1, zi1) / (ri1*ri1));
     real Q_2 = Ai2 * exp(- distance(x, y_fix, z, xi2, yi2, zi2) / (ri2*ri2));
     real Q_3 = Ai3 * exp(- distance(x, y_fix, z, xi3, yi3, zi3) / (ri3*ri3));
-    return Q_1 + Q_2 + Q_3;
+    return Q_1+Q_2+Q_3;
 }
 
 void generate_hyperthermia_matrix(){
@@ -120,9 +120,9 @@ void init_vars(){
     z = arange(z0, zf, h);
 
     // /*Inicialização dos dados da hipertermia*/
-    xi1=0.02; yi1=y_fix; zi1=0.055; Ai1=0.8e6; ri1=0.6e-3;
-    xi2=0.025; yi2=y_fix; zi2=0.045; Ai2=0.7e6; ri2=0.6e-3;
-    xi3=0.015; yi3=y_fix; zi3=0.04; Ai3=0.7e6; ri3=0.6e-3;
+    xi1=0.02; yi1=y_fix; zi1=0.055; Ai1=0.8e6; ri1=0.3e-2;
+    xi2=0.025; yi2=y_fix; zi2=0.045; Ai2=0.7e6; ri2=0.3e-2;
+    xi3=0.015; yi3=y_fix; zi3=0.04; Ai3=0.7e6; ri3=0.3e-2;
 
     generate_tissue_matrix(); //obtém a matriz com os valores para melhorar desempenho depois
     generate_hyperthermia_matrix(); //obtém a matriz com os valores calculados da hipertermia para melhorar desempenho depois
