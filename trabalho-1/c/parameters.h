@@ -70,7 +70,7 @@ real distance(real x1, real y1, real z1, real x2, real y2, real z2){
 }
 
 int is_inside_tumor(real x, real z){
-    return distance(x, y_fix, z, xt1, y_fix, zt1) <= rt1*rt1 || distance(x, y_fix, z, xt2, y_fix, zt2) <= rt2*rt2;
+    return distance(x, y_fix, z, xt1, yt1, zt1) <= rt1*rt1 || distance(x, y_fix, z, xt2, yt2, zt2) <= rt2*rt2;
 }
 
 /*---------------------------------Parâmetros do Problema-----------------------------------*/
