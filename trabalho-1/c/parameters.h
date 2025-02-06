@@ -19,12 +19,14 @@ real x0, xf, z0, zf; //limites do domínio
 real tol; //tolerancia do gauss-seidel 
 real T_a; //temperatura arterial
 real T_thresh1, T_thresh2; // Temperatura limiar do omega
+real t0 = 0, tf = 10; // Tempo inicial e final em segundos.
 
 //Variáveis ou vetores implicadas a partir dos dados do problema
-int tamx, tamz; //número de pontos em x e z
-real *x, *z; //vetores com os valores de x e z
+int tamx, tamz, tamt; //número de pontos em x e z
+real *x, *z, *t; //vetores com os valores de x e z
 int **tissue; //Matriz contendo o mapeamento => 1: tumor, 2: músculo, 3: gordura, 4: derme.
 real **Q_r; //Matriz contendo os cálculos prontos da hipertermia.
+real ht; // Discretização do tempo
 
 // Parâmetros da Hipertermia.
 real xi1, yi1, zi1, Ai1, ri1;

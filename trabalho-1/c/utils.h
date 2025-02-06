@@ -126,6 +126,13 @@ void init_vars(){
 
     generate_tissue_matrix(); //obtém a matriz com os valores para melhorar desempenho depois
     generate_hyperthermia_matrix(); //obtém a matriz com os valores calculados da hipertermia para melhorar desempenho depois
+
+    ht = (0.25 * h * h) / 0.55; // ht <= [(1/4) * h^2] / k_max
+    t = arange(t0, tf, ht);
+
+    tamt = (tf - t0)/ht + 1;
+
+    /*Determinando o valor de h_t para o caso parabólico.*/
 }
 
 void end_vars(){
@@ -151,18 +158,15 @@ void export_output(char* filename, void** matrix, size_t element_size){
     fclose(fptr);
 }
 
-// void export_data(char *filename, real time, int num_iters){
-//     FILE *fptr = fopen(filename, "w");
-    
-//     if(fptr == NULL){
-//         printf("Erro ao criar/abrir arquivo.\n");
-//     }
+/*----------Funções para AJUDAR na Parte Parabólica--------------------------*/
 
-//     fprintf(fptr, "%lf\n", h);
-//     fprintf(fptr, "%.6f\n", time);
-//     fprintf(fptr, "%d\n", num_iters);  
-    
-//     fclose(fptr);
-// }
+/*Realiza a cópia de m2 para m1, ou seja, m1 <- m2. As matrizes são assumidas ter dimensões tamz e tamx*/
+void copyMatrix(real **m1, real **m2){
+    for(int j = 0; j < tamz; j++){
+        for(int i = 0; i < tamx; i++){
+            m1[j][i] = m2[j][i];
+        }
+    }
+}
 
 #endif
