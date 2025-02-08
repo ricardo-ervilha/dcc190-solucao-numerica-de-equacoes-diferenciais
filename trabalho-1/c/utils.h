@@ -127,7 +127,8 @@ void init_vars(){
     generate_tissue_matrix(); //obtém a matriz com os valores para melhorar desempenho depois
     generate_hyperthermia_matrix(); //obtém a matriz com os valores calculados da hipertermia para melhorar desempenho depois
 
-    ht = (0.25 * h * h) / 0.55; // ht <= [(1/4) * h^2] / k_max
+    ht = (h * h) / 2.2;
+
     t = arange(t0, tf, ht);
 
     tamt = (tf - t0)/ht + 1;
@@ -167,6 +168,17 @@ void copyMatrix(real **m1, real **m2){
             m1[j][i] = m2[j][i];
         }
     }
+}
+
+/*Realiza o cálculo do erro entre m1 e m2 utilizando a soma das diferenças absolutas. As matrizes são assumidas ter dimensões tamz e tamx*/
+real calculate_error(real **m1, real **m2){
+    real diff = 0;
+    for(int j = 0; j < tamz; j++){
+        for(int i = 0; i < tamx; i++){
+            diff += fabs(m1[j][i] - m2[j][i]);
+        }
+    }
+    return diff;
 }
 
 #endif

@@ -115,7 +115,11 @@ int main(int argc, char* argv[]){
     printf("=>Tempo gasto: %f\n", cpu_time_used);
 
     export_output("../inout/steady/steady_par.bin", (void**) u, sizeof(real));
+    
+    
+    free_matrix((void**) u);
     end_vars();
+
 
     return 0;
 }

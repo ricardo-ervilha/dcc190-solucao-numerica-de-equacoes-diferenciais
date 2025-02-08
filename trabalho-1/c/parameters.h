@@ -130,4 +130,28 @@ real k_harm(real k1, real k2){
     return (2 * k1 * k2) / (k1 + k2);
 }
 
+/*--------------------------------------Parâmetros para a Parabólica ---------------------------*/
+real rho(int j, int i){
+    if(tissue[j][i] == 1)
+        return 1000;
+    else if(tissue[j][i] == 2)
+        return 1000;
+    else if(tissue[j][i] == 3)
+        return 1000;
+    else
+        return 1200;
+}  
+
+real c(int j, int i){
+    if(tissue[j][i] == 1)
+        return 4200;
+    else if(tissue[j][i] == 2)
+        return 3800;
+    else if(tissue[j][i] == 3)
+        return 2500;
+    else
+        return 3600;
+}
+
+
 #endif

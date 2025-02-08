@@ -2,52 +2,46 @@
 #include <time.h>
 
 
-real** solver(){
-    
-    //jacobi variables
-    int iter = 0;
-    real error = HUGE_VAL;
+void solver(){
 
     int j_p, j_m, i_p, i_m;
     real k_zp, k_zm, k_xp, k_xm;
 
-    real tmp;
-    real diff;
+    real **T_n = (real**) alloc_matrix(tamz, tamx, sizeof(real), &T_a); // initiliazes T^n with left boundary condition.
+    real **T_np1 = (real**) alloc_matrix(tamz, tamx, sizeof(real), &T_a); // initiliazes T^{n+1} with left boundary condition.
 
-    real **u_n = (real**) alloc_matrix(tamz, tamx, sizeof(real), &T_a); // u^n
-    real **u_np1_new = (real**) alloc_matrix(tamz, tamx, sizeof(real), &T_a); // u^{n+1}
-    real **u_np1_old = (real**) alloc_matrix(tamz, tamx, sizeof(real), &T_a); // cópia anterior do u^{n+1}
+    char filepath[256];
 
-    // timesteps
-    for(int z = 0; z < tamt; z++){
+    for(int z = 0; z < tamt; z++){ //loop in timesteps
 
-        //setup jacobi variables...
-        copyMatrix(u_np1_old, u_np1_new); // save the current values to calculate error.
-        iter = 0;
-        error = HUGE_VAL;
-
-        while(error > tol){
-            for(int j = 0; j < tamz; j++){
-        
-                for(int i = 1; i < tamx; i++){
-                    j_p = (j == tamz - 1) ? (j - 1) : (j + 1);
-                    j_m = (j == 0) ? (j + 1) : (j - 1);
-                    i_p = (i == tamx - 1) ? (i - 1) : (i + 1);
-                    i_m = i - 1;
-
-                    k_zp = k_harm(k(j, i), k(j_p, i));
-                    k_zm = k_harm(k(j, i), k(j_m, i));
-                    k_xp = k_harm(k(j, i), k(j, i_p));
-                    k_xm = k_harm(k(j, i), k(j, i_m));
-
-                    u_new[j][i] = ;
-                }
-
+        //loops in spatial coordinates
+        for(int j = 0; j < tamz; j++){
+            for(int i = 1; i < tamx; i++){
+                
+                j_p = (j == tamz - 1) ? (j - 1) : (j + 1);
+                j_m = (j == 0) ? (j + 1) : (j - 1);
+                i_p = (i == tamx - 1) ? (i - 1) : (i + 1);
+                i_m = i - 1;
+    
+                k_zp = k_harm(k(j, i), k(j_p, i));
+                k_zm = k_harm(k(j, i), k(j_m, i));
+                k_xp = k_harm(k(j, i), k(j, i_p));
+                k_xm = k_harm(k(j, i), k(j, i_m));
+    
+                T_np1[j][i] = T_n[j][i] + (ht / (rho(j,i) * c(j,i) * h * h)) * (k_xp * T_n[j][i_p] - (k_xp + k_xm) * T_n[j][i]  + k_xm * T_n[j][i_m] + k_zp * T_n[j_p][i] + (k_zp + k_xm) * T_n[j][i] + k_zm * T_n[j_m][i] + h * h * (omega_b(j, i, T_n[j][i]) * c_b(j,i)*(T_a - T_n[j][i]) + Q_m(j,i) + Q_r[j][i]));   
             }
         }
-
+        copyMatrix(T_n, T_np1);
+        
+        if(z % 100000 == 0){
+            printf("Timestep: %d\n", z);
+            sprintf(filepath, "../inout/parabolic/seq/h1/snapshot_%d.bin", z); // saves each snapshot in thre respective folder
+            export_output(filepath, (void**) T_np1, sizeof(real));
+        }
     }
 
+    free_matrix((void**) T_np1);
+    free_matrix((void**) T_n);
 }
 
 int main(int argc, char* argv[]){
@@ -57,14 +51,17 @@ int main(int argc, char* argv[]){
     clock_t start, end;
     real cpu_time_used;
 
+    printf("Discretização espacial: %lf\n", h);
+    printf("Discretização temporal: %lf\n", ht);
+    printf("Número de timesteps: %d\n", tamt);
+
     start = clock();
-    real **u = solver();
+    solver();
     end = clock();
 
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    printf("=>Tempo gasto: %f\n", cpu_time_used);
+    printf("=> Tempo gasto: %f\n", cpu_time_used);
 
-    export_output("../inout/parabolic/parabolic.bin", (void**) u, sizeof(real));
     end_vars();
 }
