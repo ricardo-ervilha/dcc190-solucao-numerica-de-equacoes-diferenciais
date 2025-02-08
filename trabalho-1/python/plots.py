@@ -129,8 +129,8 @@ def parabolic_animation(folderbin, filename, x_min, x_max, y_min, y_max, tamz, t
     cbar.set_label(f'Temperatura ($^\circ$C)', rotation=90, labelpad=15, fontsize=14)
 
     #-------------------------------------
-    ax.xaxis.set_major_formatter(formatter)
-    ax.yaxis.set_major_formatter(formatter)
+    ax.xaxis.set_major_formatter(FuncFormatter(format_ticks))
+    ax.yaxis.set_major_formatter(FuncFormatter(format_ticks))
 
     ax.xaxis.set_tick_params(labelsize=14)
     ax.yaxis.set_tick_params(labelsize=14)
@@ -149,14 +149,16 @@ def parabolic_animation(folderbin, filename, x_min, x_max, y_min, y_max, tamz, t
 
     # Função de atualização para a animação
     def update(frame):
-        print(frame * snapshot_step)
+        print(frame)
         snapshot = read_matrix(f"{folderbin}/snapshot_{frame * snapshot_step}.bin", tamz, tamx, type=np.float64)
-        im.set_data(snapshot)  # Atualiza a imagem
+        im.set_data(snapshot)
         im.set_clim(np.min(snapshot), np.max(snapshot))
+        cbar.update_normal(im)  # Atualiza manualmente a barra de cores
+        fig.canvas.draw_idle()  # Força a atualização da figura
         return [im]
 
     # Criando a animação
-    ani = FuncAnimation(fig, update, frames=tamt, interval=200, blit=True)
+    ani = FuncAnimation(fig, update, frames=tamt, interval=200)
 
     # Salvando o vídeo
     ani.save(f"../inout/{filename}.mp4", writer='ffmpeg', dpi=300)

@@ -127,7 +127,8 @@ void init_vars(){
     generate_tissue_matrix(); //obtém a matriz com os valores para melhorar desempenho depois
     generate_hyperthermia_matrix(); //obtém a matriz com os valores calculados da hipertermia para melhorar desempenho depois
 
-    ht = (h * h) / 2.2;
+    // ht = (h * h) / 2.2;
+    ht = 0.01;
 
     t = arange(t0, tf, ht);
 
