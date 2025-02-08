@@ -25,6 +25,9 @@ def read_config_txt(filename):
         )
         
         data['tol'] = float(file.readline().strip())
+        data['tf'] = float(file.readline().strip())
+        data['snapshot_interval'] = int(file.readline().strip())
+
     
     return data
 

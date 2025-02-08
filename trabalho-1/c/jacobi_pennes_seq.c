@@ -28,12 +28,12 @@ void solver(){
                 k_xp = k_harm(k(j, i), k(j, i_p));
                 k_xm = k_harm(k(j, i), k(j, i_m));
     
-                T_np1[j][i] = T_n[j][i] + (ht / (rho(j,i) * c(j,i) * h * h)) * (k_xp * T_n[j][i_p] - (k_xp + k_xm) * T_n[j][i]  + k_xm * T_n[j][i_m] + k_zp * T_n[j_p][i] + (k_zp + k_xm) * T_n[j][i] + k_zm * T_n[j_m][i] + h * h * (omega_b(j, i, T_n[j][i]) * c_b(j,i)*(T_a - T_n[j][i]) + Q_m(j,i) + Q_r[j][i]));   
+                T_np1[j][i] = T_n[j][i] + (ht / (rho(j,i) * c(j,i) * h * h)) * (k_xp * T_n[j][i_p] - (k_xp + k_xm) * T_n[j][i] + k_xm * T_n[j][i_m] + k_zp * T_n[j_p][i] - (k_zp + k_zm) * T_n[j][i] + k_zm * T_n[j_m][i] + h * h * (omega_b(j, i, T_n[j][i]) * c_b(j,i)*(T_a - T_n[j][i]) + Q_m(j,i) + Q_r[j][i]));   
             }
         }
         copyMatrix(T_n, T_np1);
         
-        if(z % 100000 == 0){
+        if(z % snapshot_interval == 0){
             printf("Timestep: %d\n", z);
             sprintf(filepath, "../inout/parabolic/seq/h1/snapshot_%d.bin", z); // saves each snapshot in thre respective folder
             export_output(filepath, (void**) T_np1, sizeof(real));

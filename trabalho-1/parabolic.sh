@@ -11,5 +11,5 @@ else
     echo "Erro na compilação!"
 fi
 
-# cd ../python
-# python parabolic.py .../parabolic/seq/h1 parabolic_animation
+cd ../python
+python parabolic.py ../parabolic/seq/h1 parabolic_animation

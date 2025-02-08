@@ -19,7 +19,8 @@ real x0, xf, z0, zf; //limites do domínio
 real tol; //tolerancia do gauss-seidel 
 real T_a; //temperatura arterial
 real T_thresh1, T_thresh2; // Temperatura limiar do omega
-real t0 = 0, tf = 10; // Tempo inicial e final em segundos.
+real t0 = 0, tf; // Tempo inicial e final em segundos.
+int snapshot_interval;
 
 //Variáveis ou vetores implicadas a partir dos dados do problema
 int tamx, tamz, tamt; //número de pontos em x e z
@@ -44,6 +45,8 @@ x0 xf z0 zf
 T_a
 T_thresh1 T_thresh2
 tol
+tf
+snapshot_interval
 */
 void read_config_txt(char* filename){
     FILE *fptr;
@@ -54,8 +57,8 @@ void read_config_txt(char* filename){
         printf("Incorret filename! Error at line 51 on parameters.h\n");
     }
     
-    if (fscanf(fptr, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
-               &h, &y_fix, &muscle_thick, &fat_thick, &dermis_thick, &xt1, &yt1, &zt1, &rt1, &xt2, &yt2, &zt2, &rt2, &x0, &xf, &z0, &zf, &T_a, &T_thresh1, &T_thresh2, &tol) != 21) {
+    if (fscanf(fptr, "%lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %d",
+               &h, &y_fix, &muscle_thick, &fat_thick, &dermis_thick, &xt1, &yt1, &zt1, &rt1, &xt2, &yt2, &zt2, &rt2, &x0, &xf, &z0, &zf, &T_a, &T_thresh1, &T_thresh2, &tol, &tf, &snapshot_interval) != 23) {
         printf("Error reading file's values. Line 56 on parameters.h\n");
         fclose(fptr);
     }

@@ -11,10 +11,11 @@ if __name__ == "__main__":
 
     configs = read_config_txt("../inout/config.txt")
     
+    ht = (configs['h'] ** 2) / 2.2
     tamz = int((configs['zf'] - configs['z0']) / configs['h']) + 1
     tamx = int((configs['xf'] - configs['x0']) / configs['h']) + 1
-    tamt = 51
-    snapshot_step = 100000
+    tamt = int((configs['tf']  - 0) / ht) + 1
+    snapshot_step = configs['snapshot_interval']
 
     parabolic_animation(folderbin, plotname, configs['x0'], configs['xf'], configs['z0'], configs['zf'] ,tamz, tamx, tamt, snapshot_step)
     
