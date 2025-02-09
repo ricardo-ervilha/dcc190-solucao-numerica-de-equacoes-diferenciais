@@ -149,7 +149,7 @@ def parabolic_animation(folderbin, filename, x_min, x_max, y_min, y_max, tamz, t
 
     # Função de atualização para a animação
     def update(frame):
-        print(frame)
+        print(f"Processamento: {frame}/{tamt}")
         snapshot = read_matrix(f"{folderbin}/snapshot_{frame * snapshot_step}.bin", tamz, tamx, type=np.float64)
         im.set_data(snapshot)
         im.set_clim(np.min(snapshot), np.max(snapshot))

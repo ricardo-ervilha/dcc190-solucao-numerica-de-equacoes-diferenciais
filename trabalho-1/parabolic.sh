@@ -2,14 +2,15 @@
 
 #compilação
 cd c
-gcc -Wall -o ../exec/pennes_seq pennes_seq.c -fopenmp -Ofast -lm
+gcc -Wall -o ../exec/pennes_parabolic pennes_parabolic.c -fopenmp -Ofast -lm
 
 if [ $? -eq 0 ]; then
     cd ../exec
-    ./pennes_seq
+    # export OMP_NUM_THREADS=1 # descomente e configure o número de threads que deseja usar.
+    ./pennes_parabolic
 else
     echo "Erro na compilação!"
 fi
 
 cd ../python
-python parabolic.py ../inout/parabolic/seq/h1 parabolic_animation
+python parabolic.py ../inout/snapshots animation
