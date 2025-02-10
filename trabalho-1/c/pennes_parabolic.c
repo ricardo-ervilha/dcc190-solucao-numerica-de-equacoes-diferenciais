@@ -68,7 +68,7 @@ int main(int argc, char* argv[]){
     end = omp_get_wtime();
 
     //COMENTE PARA RODAR O EXPERIMENTO
-    // printf("Tempo paralelo: \t %f com %d threads.\n", end-start, omp_get_max_threads());
+    printf("Tempo paralelo: \t %f com %d threads.\n", end-start, omp_get_max_threads());
     
     /*Experiment saving time*/
 
