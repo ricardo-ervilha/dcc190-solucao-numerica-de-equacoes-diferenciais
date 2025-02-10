@@ -12,7 +12,7 @@ void solver(){
     real **restrict T_np1 = (real**) alloc_matrix(tamz, tamx, sizeof(real), &T_a); // initiliazes T^{n+1} with left boundary condition.
     real **restrict aux;
 
-    // char filepath[256]; // COMENTE PARA RODAR O EXPERIMENTO
+    char filepath[256]; // COMENTE PARA RODAR O EXPERIMENTO
 
     for(int z = 0; z < tamt; z++){ //loop in timesteps
 
@@ -36,11 +36,11 @@ void solver(){
         }
         
         // COMENTE O IF ABAIXO PARA RODAR O EXPERIMENTO
-        // if(z % snapshot_interval == 0){
-        //     printf("Timestep: %d\n", z);
-        //     sprintf(filepath, "../inout/snapshots/snapshot_%d.bin", z); // saves each snapshot in the respective folder
-        //     export_output(filepath, (void**) T_np1, sizeof(real));
-        // }
+        if(z % snapshot_interval == 0){
+            printf("Timestep: %d\n", z);
+            sprintf(filepath, "../inout/snapshots/snapshot_%d.bin", z); // saves each snapshot in the respective folder
+            export_output(filepath, (void**) T_np1, sizeof(real));
+        }
 
         aux = T_n;
         T_n = T_np1;
@@ -59,28 +59,28 @@ int main(int argc, char* argv[]){
     double start, end;
 
     //COMENTE PARA RODAR O EXPERIMENTO
-    // printf("Discretização espacial: %lf\n", h);
-    // printf("Discretização temporal: %lf\n", ht);
-    // printf("Número de timesteps: %d\n", tamt);
+    printf("Discretização espacial: %lf\n", h);
+    printf("Discretização temporal: %lf\n", ht);
+    printf("Número de timesteps: %d\n", tamt);
 
     start = omp_get_wtime();
     solver();
     end = omp_get_wtime();
 
     //COMENTE PARA RODAR O EXPERIMENTO
-    // printf("Tempo paralelo: \t %f com %d threads.\n", end-start, omp_get_max_threads());
+    printf("Tempo paralelo: \t %f com %d threads.\n", end-start, omp_get_max_threads());
     
     /*Experiment saving time*/
 
     // COMENTE PARA GERAR A ANIMAÇÃO
-    char filepath[256];
-    snprintf(filepath, sizeof(filepath), "../inout/parabolic/%d/%g.dat", omp_get_max_threads(), h);
+    // char filepath[256];
+    // snprintf(filepath, sizeof(filepath), "../inout/parabolic/%d/%g.dat", omp_get_max_threads(), h);
 
-    FILE *f = fopen(filepath, "w");
-    if(f){
-        fprintf(f, "%lf\n", end-start);
-        fclose(f);
-    }
+    // FILE *f = fopen(filepath, "w");
+    // if(f){
+    //     fprintf(f, "%lf\n", end-start);
+    //     fclose(f);
+    // }
 
     end_vars();
 }
