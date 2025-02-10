@@ -117,9 +117,13 @@ def parabolic_animation(folderbin, filename, x_min, x_max, y_min, y_max, tamz, t
     #------------------------------------
     fig, ax = plt.subplots(figsize=(7, 7))
 
+    # Carregar o último snapshot e obter os valores mínimo e máximo
+    last_snapshot = read_matrix(f"{folderbin}/snapshot_{(tamt - 1) * snapshot_step}.bin", tamz, tamx, type=np.float64)
+    vmin, vmax = np.min(last_snapshot), np.max(last_snapshot)
+
     # Plot inicial
     snapshot0 = read_matrix(f"{folderbin}/snapshot_0.bin", tamz, tamx, type=np.float64)
-    im = ax.imshow(snapshot0, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='coolwarm')
+    im = ax.imshow(snapshot0, extent=[x_min, x_max, y_min, y_max], origin='lower', cmap='coolwarm', vmin=vmin, vmax=vmax)
 
     ax.scatter(xs, zs, color='black', marker='x', s=25, label='Locais de Injeção')
 
@@ -152,13 +156,12 @@ def parabolic_animation(folderbin, filename, x_min, x_max, y_min, y_max, tamz, t
         print(f"Processamento: {frame}/{tamt}")
         snapshot = read_matrix(f"{folderbin}/snapshot_{frame * snapshot_step}.bin", tamz, tamx, type=np.float64)
         im.set_data(snapshot)
-        im.set_clim(np.min(snapshot), np.max(snapshot))
-        cbar.update_normal(im)  # Atualiza manualmente a barra de cores
+        ax.set_title(f"$t = {frame * 10:.2f} s$", fontsize=14)
         fig.canvas.draw_idle()  # Força a atualização da figura
         return [im]
 
     # Criando a animação
-    ani = FuncAnimation(fig, update, frames=tamt, interval=200)
+    ani = FuncAnimation(fig, update, frames=tamt, interval=100)
 
     # Salvando o vídeo
     ani.save(f"../inout/{filename}.mp4", writer='ffmpeg', dpi=300)

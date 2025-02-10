@@ -1,5 +1,5 @@
 - Calcular a taxa de necrose considerando o artigo: https://iopscience.iop.org/article/10.1088/1742-6596/490/1/012138/pdf
-- Fazer o vídeo.
-- Comparar o steady-state com o parabolico t->3000(s)
+- Fazer o vídeo. (check)
+- Comparar o steady-state com o parabolico t->3000(s) (check)
 - Comparar sem o Q_r com o Q_r para mostrar diferença de temperatura
 - Etc.

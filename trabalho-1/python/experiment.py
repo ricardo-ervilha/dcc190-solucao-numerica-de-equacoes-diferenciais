@@ -5,8 +5,8 @@ import subprocess
 if __name__ == "__main__":
     hs = [0.001, 0.0005, 0.00025]
     
-    # threads = [1, 2, 4, 8, 12, 16, 20, 24, 28, 32] # RODAR NO LIGHTNING
-    threads = [1, 2, 3, 4, 5, 6] # rodando no meu desktop
+    threads = [1, 2, 4, 8, 12, 16, 20, 24, 28, 32] # RODAR NO LIGHTNING
+    # threads = [1, 2, 3, 4, 5, 6] # rodando no meu desktop
 
     compile = ["gcc", "-Wall", "-o", "../exec/pennes_parabolic", "../c/pennes_parabolic.c", "-Ofast", "-lm", "-fopenmp"]
 
