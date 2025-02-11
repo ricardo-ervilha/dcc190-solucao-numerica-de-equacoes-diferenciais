@@ -61,3 +61,5 @@ if __name__ == "__main__":
             speedups.loc[h, thread] = df.loc[h, 1] / df.loc[h, thread]
 
     plot_speedup(speedups, hs, threads)
+
+    print(speedups.to_latex(float_format="%.2f"))

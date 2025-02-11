@@ -11,6 +11,7 @@ def format_ticks(value, _):
     return f"{value:.2f}".rstrip("0").rstrip(".")
 
 def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max):
+
     # changing font
     plt.rcParams["font.family"] = "serif"
 
@@ -27,10 +28,14 @@ def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max):
 
     ax.scatter(xs, zs, color='black', marker='x', s=25, label='Locais de Injeção')
 
-    #colorbar
+    # colorbar
     cbar = fig.colorbar(im, ax=ax, orientation='vertical')
     cbar.ax.tick_params(labelsize=14)
     cbar.set_label(f'Temperatura ($^\circ$C)', rotation=90, labelpad=15, fontsize=14)
+
+    # Set the colorbar ticks to display in decimal format instead of scientific notation
+    cbar.formatter.set_powerlimits((0, 0))  # Removes scientific notation
+    cbar.ax.yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))  # Sets the tick format to 2 decimal places
 
     #-------------------------------------
     ax.xaxis.set_major_formatter(formatter)
@@ -55,6 +60,7 @@ def plot_steady_state(filename, matrix, x_min, x_max, y_min, y_max):
     plt.tight_layout()
     plt.savefig(f"../inout/{filename}.png", dpi=300)
     plt.close()
+
 
 
 def plot_tissue(filename, matrix, x_min, x_max, y_min, y_max):
@@ -153,10 +159,10 @@ def parabolic_animation(folderbin, filename, x_min, x_max, y_min, y_max, tamz, t
 
     # Função de atualização para a animação
     def update(frame):
-        print(f"Processamento: {frame}/{tamt}")
+        print(f"Processamento: {frame+1}/{tamt}")
         snapshot = read_matrix(f"{folderbin}/snapshot_{frame * snapshot_step}.bin", tamz, tamx, type=np.float64)
         im.set_data(snapshot)
-        ax.set_title(f"$t = {frame * 10:.2f} s$", fontsize=14)
+        ax.set_title(f"$t = {(frame+1) * 10:.2f} s$", fontsize=14)
         fig.canvas.draw_idle()  # Força a atualização da figura
         return [im]
 
